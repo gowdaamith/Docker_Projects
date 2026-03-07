@@ -41,3 +41,5 @@ So docker combines them:
 ENTRYPOINT + CMD
 
 
+We can also use the Entrypoint to run the scripts in advance like 
+ENTRYPOINT [ "./firstrunthis.sh"] 
