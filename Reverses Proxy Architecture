@@ -1,0 +1,157 @@
+Project 4: Node.js  + MySQL  + Nginx Reverse Proxy 
+____________________________________________________
+
+Goal : 
+* Node backend cotainer  connects to MYSQL  container
+* Nginx container acts as a revers proxy 
+* Everything runs via Docker Compose
+
+Step 1: Node-app/Server.js
+
+This code give error while connecting to the Database to fectch the  data 
+
+const http = require("http");
+const mysql = require("mysql");
+
+// Connect to MySQL container using service name as host
+const db = mysql.createConnection({
+  host: "mysql",        // this is the MySQL container name in docker-compose.yml
+  user: "root",
+  password: "password",
+  database: "testdb"
+});
+
+db.connect(err => {
+  if (err) {
+    console.error("Database connection failed:", err);
+  } else {
+    console.log("Connected to MySQL database!");
+  }
+});
+
+// Simple HTTP server
+const server = http.createServer((req, res) => {
+  if (req.url === "/users") {
+    // Example: fetch users from MySQL
+    db.query("SELECT id, name FROM users", (err, results) => {
+      if (err) {
+        res.writeHead(500, { "Content-Type": "text/plain" });
+        res.end("Database query error");
+      } else {
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(results));
+      }
+    });
+  } else {
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end("Hello from Node container!");
+  }
+});
+
+server.listen(3000, () => {
+  console.log("Node app running on port 3000");
+});
+
+Step 2 :  Create a Database tabel 
+--------------------------------------------------------
+We need a simple table for  the NODE app  .You can run inside MYsql container
+
+To exec into the  container first you need to run the container to do use the cmd
+>> docker-compose up -d mysql
+Then
+>> docker exec -it mysql bash
+>> mysql -uroot -ppassword testdb
+Create table 
+>> SHOW TABLES;
+>> CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(50));
+>> INSERT INTO users VALUES (1, 'Amith');
+>> SELECT * FROM users;
+
+
+Step 3 :Dockerfile for Nodeapp
+-------------------------------------------------------
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["node","server.js"]
+
+Step 4: nginx cofig
+-----------------------------------------------------------
+ngixn/default.conf
+server {
+    listen 80;
+
+    location / {
+        proxy_pass http://node-app:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+
+Step 5 : Docker-compose 
+----------------------------------------------------------
+version: "3"
+
+services:
+
+  node-app:
+    build: ./node-app
+    container_name: node_app
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - node-app
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: testdb
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+Step 6 : Run everything 
+-------------------------------------------------
+>> docker-compose up -d 
+if something went wrong use the command
+>> docker logs  image_name
+if  nothing working 
+>> docker-compose up    # this will show what is going in detail 
+After you modify the files or fix the  things run
+>> docker-compose build --no-cache 
+>> docker-compose up 
+
+Step 7 - Test 
+1.Open browser  and 
+>> http://localhost/
+2.Fetch database content
+>> http://localhost/users
+the output should look like this :
+[
+  { "id": 1, "name": "Amith" },
+  { "id": 2, "name": "John" },
+  { "id": 3, "name": "Alice" }
+]
+
+Unfortunately it's not looking like this and we are not getting it here due to some code issue 
