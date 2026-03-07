@@ -1,0 +1,74 @@
+Project 1 - Run a simple Web Server Using Docker 
+
+Step 1 - Add the current user to the docker group 
+
+Check the current user:
+>> whoami
+Check the current user group:
+>> groups amith26
+Add the current user to the group if he is not present 
+>> sudo usermod -aG docker amith26
+
+Step 2 - Check the Docker Installation 
+>> docker --version 
+
+Expected output:
+amith26@LAPTOP-4DUIV0LS:~$ docker  --version
+Docker version 28.2.2, build 28.2.2-0ubuntu1~24.04.1
+
+
+Step 3 - Pull the Nginx Image from the dockerhub
+
+>> docker pull nginx
+This downloads the nginx image from the docker hub to your local repository 
+
+To check the installation of the docker images use 
+>> docker images  
+
+Step 4 - Run the containers
+
+Now start the containers
+>> docker start -d -p 8080:80 nginx
+
+Expected Output:
+bf14cfc8b153fbdf49ddff4766db3590da1369adae3128ce450be086a4deb404
+
+Request flow : 
+Browser
+   ↓
+Your Machine Port 8080
+   ↓
+Docker Container
+   ↓
+Nginx running on port 80
+
+Step 4: Check Running Containers 
+
+Use the command
+>> docker ps
+
+Expected output:
+
+amith26@LAPTOP-4DUIV0LS:~$  docker ps
+lCONTAINER ID   IMAGE     COMMAND                  CREATED              STATUS              PORTS                                     NAMES
+bf14cfc8b153   nginx     "/docker-entrypoint.…"   About a minute ago   Up About a minute   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   nifty_sutherland
+
+Step 5: Connect to the container in the browser
+Go to : 
+>> http://localhost:8080
+
+YOu should see the nginx sites
+
+Step 6 - Stop the container 
+
+To stop the container you must first know the container ID 
+>> docker ps
+
+Then stop it :
+>> docker stop <container ID>
+
+Step 7 - Remove Container
+
+>>docker remove <container-ID>
+
+
