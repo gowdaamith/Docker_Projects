@@ -1,0 +1,149 @@
+In this Project you will run multiple containers that commnicate with each 
+using Docker compose inside the docker 
+
+YOu will run : 
+*Node.js API
+*MySQL database
+*Optional DB UI
+
+
+Project 3: Multi container Application 
+------------------------------------------
+
+Goal : 
+Run Node.js + MySql together using Docker compose
+
+Architecture : 
+
+Browser
+   ↓
+Node.js Container
+   ↓
+MySQL Container
+
+Container communicate through Docker internal Network 
+
+
+
+Step 1: Create a project folder 
+--------------------------------
+
+>> mkdir docker-multi-app
+>> cd docker-multi-app
+
+Project structure should look like this 
+
+docker-multi-app
+│
+├── server.js
+├── package.json
+├── Dockerfile
+└── docker-compose.yml
+
+Step 2 : Create Node application
+-----------------------------------
+Create a file:
+
+>> vim server.js
+paste this : 
+const http = require("http");
+const mysql = require("mysql");
+
+const db = mysql.createConnection({
+    host: "mysql",
+    user: "root",
+    password: "password",
+    database: "testdb"
+});
+
+db.connect(err => {
+    if (err) {
+        console.log("Database connection failed");
+    } else {
+        console.log("Connected to MySQL");
+    }
+});
+
+const server = http.createServer((req,res)=>{
+    res.writeHead(200, {"Content-Type":"text/plain"});
+    res.end("Node app connected to MySQL container");
+});
+
+server.listen(3000, ()=>{
+    console.log("Server running on port 3000");
+});
+
+Step 3 : Create package.json
+-----------------------------------------
+>> npm init -y
+>> npm install mysql
+
+
+Step 4 : Create a dockerfile
+------------------------------------------
+
+FROM node:18-alpine 
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . . 
+EXPOSE 3000
+CMD [ "node" , "server.js"]
+
+Step 6 : Create a docker-compose file 
+------------------------------------------
+>> vim docker_compose.yaml
+
+version: "3"
+
+services:
+
+  node-app:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: testdb
+    ports:
+      - "3306:3306"
+
+Step 6 : Understand the architecuture 
+-----------------------------------------
+Docker compose will create 
+2 container one node-app and the othee is mysql
+Network :> Shared Docker network 
+
+Inside the docker network ; 
+nodeapp connects to mysql using hostname = mysql 
+This is why in the code we wrote: 
+host : "mysql"
+not localhost
+
+
+Step 7 ; Run the application 
+------------------------------------------
+>> docker compose up - d
+Compose will automatically : 
+
+build node image
+pull mysql image
+create network
+start containers
+
+Then test that application : 
+http://localhost:3000
+
+Step 8: Stop everything 
+--------------------------------------------
+>> docker compose down 
+Thi stops and removes all containers 
+
+
+
