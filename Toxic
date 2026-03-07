@@ -1,0 +1,43 @@
+ CMD  = default command we can override
+------
+
+  CMD defines the default command a container  runs when it start 
+
+Example: CMD ["node","server.js"]
+
+When you run the cotainer 
+>> docker run myapp
+Docker executes 
+>> node server.js
+
+But this can be overridden easily :
+EX:
+>> docker run myapp node test.js 
+Now the docker runs 
+>> node test.js
+
+ENTRYPOINT 
+------------
+   ENTRYPOINT defines the main executable that always runs
+
+EX:
+ENTRYPOINT ["node"]
+CMD ["server.js"]
+
+When the container start this files runs:
+>> node server.js
+
+But if user runs: 
+>>docker run myapp test.js 
+
+Docker runs 
+>> node test.js
+
+Because : 
+ENTRYPOINT = node 
+CMD = server.js (default argument)
+
+So docker combines them:
+ENTRYPOINT + CMD
+
+
