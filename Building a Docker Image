@@ -1,0 +1,103 @@
+Goal  : 
+Create a Node.js webServer ->  package it into the Docker image -> 
+run it as a container
+
+Architecture : 
+Browser → Port 8080 → Docker Container → Node.js Server Port 3000
+
+Step 1: Create a Project folder 
+-------------------------------
+>> mkdir  node-server-app
+>> cd node-server-app
+
+Step 2: Create a simple Node.js Server 
+--------------------------------------
+Create a file :
+>> vim server.js
+>> paste the following code
+
+const http = require('http');
+const os = require('os');
+
+const server = http.createServer((req, res) => {
+    res.writeHead(200, {"Content-Type": "text/plain"});
+    res.end("Hello from Docker container\nHostname: " + os.hostname());
+});
+
+server.listen(3000, () => {
+    console.log("Server running on port 3000");
+});
+
+and SAVE IT 
+
+Step 3: Create a Package.json
+---------------------------------------
+Create a simple package.json by using the following commnad
+>> npm init -y
+This creates a default package.json file
+
+Step 4: Create a dockerfile
+---------------------------------------
+Create a docker file for this : 
+
+FROM node:alpine-18 as builder
+WORKDIR /app
+COPY package*.json ./
+#no need for this app just writing 
+RUN npm install
+COPY . . 
+# no need for this app just writing 
+RUN npm build                            #Not using it also 
+
+
+FROM gcr.io/distroless/nodejs22-debian13
+WORKDIR /APP
+USER nonroot
+COPY --from=builder /app .
+CMD [ "server.js"]
+
+                          or 
+
+We can write a simple on like :
+
+FROM node:alpine-18 
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD [ "server.js"]
+
+Step 6: Build the Docker Image 
+--------------------------------------
+>> docker build -t node_app:SpankmeDaddy .
+
+Now if you run "docker images" you can see your images
+>> docker images
+
+Step 7 : Run the contianers
+--------------------------------------
+>> docker run -d -p 8080:3000 nodeapp:SpankmeDaddy 
+
+Step 8 : Open the browser and trie to access the container on port 8080 or what ever the port you give
+------------------------------------------------------------------------------------------------------
+>> http://instance-ip:8080
+
+or if its localhost 
+
+>> http://localhost:8080
+
+or  on terminal
+
+Step 9 : Check the running processes 
+-----------------------------------
+>> docker ps
+
+stop the container
+>> docker stop <container-id>
+
+remove the container 
+>> docker remove <container-id>
+
+
+curl http://localhost:8080
