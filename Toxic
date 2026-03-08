@@ -43,3 +43,34 @@ ENTRYPOINT + CMD
 
 We can also use the Entrypoint to run the scripts in advance like 
 ENTRYPOINT [ "./firstrunthis.sh"] 
+
+
+____________________________________________________________________________
+
+The nginx file system installed from the sudo apt install is diffreent from its
+container filesystem  
+
+if we make chages in a file and build it if the chages are not displayed on the image 
+then we should rebuild it with cache 
+>> docker build . --no-cache 
+
+
+To check whether the container logs use 
+>> docker logs container_name
+To check whethe the container is building correctly annd handeling data correctly 
+build the container without the -d this will prevent the image from building the 
+docker image in the backgroun d
+
+typcial directories 
+
+/etc     -  configuration files
+/var     -  variable data
+/var/lib -  application data
+/usr     - program binaries
+/tmp      - temporary files 
+
+configurration file are stored in the /etc for example 
+>> /etc/nginx/nginx.conf
+>> /etc/promethes/prometheus.yml
+
+
