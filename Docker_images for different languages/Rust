@@ -1,0 +1,24 @@
+# Rust also producces binaries 
+
+FROM rust:1.76 AS build 
+WORKDIR /app
+COPY . . 
+RUN cargo build --release   # this tells the cargo to build in release mode 
+FROM debian:bookworm-slim
+COPY --from=build /app/target/release/app /app   
+CMD ["/app"]
+
+
+_________________________________________________________________________________
+Better production deployment 
+
+FROM rust:1.76 AS build 
+WORKDIR /app
+RUN rustup target add x68_64-unknown-linux-musl
+COPY . . 
+RUN cargo build --release --target x86_64-unknown-linux-musl
+FROM gcr.io/distroless/static-debian12
+COPY --from=build /app/target/x84_64-unknonw-linux-musl/release/app /app
+CMD ["/app"]
+
+Now the binary is fully static 
