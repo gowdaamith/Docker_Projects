@@ -1,0 +1,35 @@
+Java application usually go through two stages : 
+1. Build stage -> compile the code and create a jar/war file
+2. Runtime stage -> run the JAR using the Java runtime
+
+
+  This is why Java dockerfiles are almost always use multi stage builds
+
+  Typical java project structure 
+
+  project
+ ├── pom.xml
+ ├── src/
+ │   └── main/java/...
+ └── target/
+      └── app.jar   (generated after build)
+
+  The target/app.jar files is the built application 
+
+  
+2.Dockerfile for Java (Maven + Spring Boot )
+
+FROM maven:3.9-eclipse-temurin-21 AS build   # Pull the image which contains Java,maven,build tools
+WORKDIR /app                                 
+COPY pom.xml .                           # Copy the dependency file       
+RUN mvn dependency:go-offline            # This download's all the dependencies
+COPY src ./src                           # Copy the source code 
+RUN mvn package -DskipTests              # Build the application 
+
+
+FROM eclipse-temurin:21-jre              # This image contians only the java runtime 
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar  # This copies the JAR file created in the build stage
+EXPOSE 8080
+CMD ["java","-jar","app.jar"]                  # This start the java application 
+  
