@@ -1,0 +1,27 @@
+FROM gcc:13 AS build
+
+WORKDIR /app
+COPY hello.c 
+RUN gcc hello.c -o hello
+
+
+FROM  debian:bookworm-slim
+COPY --from=build /app/hello /hello
+CMD ["/hello"]
+
+#Flow
+# Create binary 
+# copy binary 
+_____________________________________________________________________________
+C++ program 
+
+FROM gcc:13 AS build 
+WORKDIR /app
+COPY main.cpp . 
+
+RUN g++ main.cpp -o app
+FROM debian:bookworm-slim
+COPY --from=build /app/app /app
+CMD["/app"]
+
+
