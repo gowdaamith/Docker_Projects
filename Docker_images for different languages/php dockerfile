@@ -1,0 +1,7 @@
+FROM php:8.3-apache  # this is the official php image   which already contains Apache web server,php runtime, Apache-PHP integration
+WORKDIR /var/www/html   # set's the currnet working directory inside the container , this is the default Apache web root
+COPY . .                 # copy the source code 
+RUN docker-php-ext-install mysqli pdo pdo_mysql #helper script configure ,compiles and enables the extentions here like mysqli pdo pdo_mysql
+EXPOSE 80
+CMD ["apache2-foreground"]  #starts the apache server 
+
