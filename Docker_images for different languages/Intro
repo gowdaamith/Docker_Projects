@@ -1,0 +1,7 @@
+Different Languages  build and run application differenctly ,So their  
+Dockerfile are also different .The key difference is: 
+
+*Interrupted languages  -> Run source directly (Python ,Node)
+*Compiled languages -> build binary first  (Go,C,C++)
+*VM languages -> compile to bytecode then run on runtime (Java)
+
