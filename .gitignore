@@ -1,0 +1,154 @@
+# -----------------------
+# OS FILES
+# -----------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# -----------------------
+# EDITOR / IDE
+# -----------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# -----------------------
+# LOG FILES
+# -----------------------
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# -----------------------
+# ENVIRONMENT FILES
+# -----------------------
+.env
+.env.*
+*.env
+
+# -----------------------
+# NODE.JS
+# -----------------------
+node_modules/
+dist/
+build/
+.npm
+.cache
+.next
+coverage/
+
+# -----------------------
+# PYTHON
+# -----------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+dist/
+build/
+venv/
+.env/
+.venv/
+pip-wheel-metadata/
+
+# -----------------------
+# JAVA
+# -----------------------
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/
+.gradle/
+build/
+
+# -----------------------
+# GO
+# -----------------------
+bin/
+pkg/
+*.test
+
+# -----------------------
+# C / C++
+# -----------------------
+*.o
+*.out
+*.exe
+*.a
+*.so
+*.dylib
+*.obj
+
+# -----------------------
+# RUST
+# -----------------------
+target/
+Cargo.lock
+
+# -----------------------
+# DOCKER
+# -----------------------
+Dockerfile.local
+docker-compose.override.yml
+*.tar
+
+# -----------------------
+# TERRAFORM
+# -----------------------
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+terraform.tfvars
+
+# -----------------------
+# KUBERNETES
+# -----------------------
+*.secret.yaml
+secrets.yaml
+
+# -----------------------
+# TEST COVERAGE
+# -----------------------
+coverage/
+htmlcov/
+
+# -----------------------
+# TEMP FILES
+# -----------------------
+tmp/
+temp/
+*.tmp
+
+# -----------------------
+# ARCHIVES
+# -----------------------
+*.zip
+*.tar
+*.gz
+*.rar
+
+# -----------------------
+# DATABASE FILES
+# -----------------------
+*.sqlite
+*.db
+
+# -----------------------
+# SECURITY
+# -----------------------
+id_rsa
+id_rsa.pub
+*.pem
+*.key
+*.crt
