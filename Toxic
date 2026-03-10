@@ -185,3 +185,49 @@ Meaning :
 >> Alpine Linux 3.23
 
 
+Using the cache to make the build faster
+___________________________________________________
+In ci pipelines (Github Actions ,Jenkins)
+>> docker images rebuild often 
+Without caching
+>> dependency install = slow
+With the cache mount :
+>> dependency install = much faster
+
+The command we use to  make this happen is : 
+>> RUN --mount=type=cache,target=/root/.npm  && npm ci --omit=dev
+
+This means 
+>> mount a persistent npm cache
+>> then install productioon dependencies only 
+
+The same caching technique is used ofr many languages like : 
+| Language | Cache Directory             |
+| -------- | --------------------------- |
+| Node     | `/root/.npm`                |
+| Python   | `/root/.cache/pip`          |
+| Go       | `/go/pkg/mod`               |
+| Maven    | `/root/.m2`                 |
+| Rust     | `/usr/local/cargo/registry` |
+This is very important optimization used in production Docker build 
+
+Read-Only filesystem  (Container Hardening)
+--------------------------------------------------
+A production container should ideally not allow writing to disk 
+Why ?Because,attackers often try to
+*Write the malware
+*modify the files
+*install backdoors
+
+If the filesystem is read-only,they cannot
+
+In the docker this is usually enabled at runtime
+>> docker run --read-only 
+In kubernetes ,you enable it in the Pod security context
+>> securityContext:
+    readOnlyRootFilesystem: true
+However if your app needs writable folders (for example temps) you must  create them explicitly 
+Example improvementn in Dockerfile
+>>RUN mkdir /tmp && chmod 777 /tmp 
+Then mount /tmp as writable
+
